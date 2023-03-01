@@ -1,7 +1,9 @@
 # Instalação do servidor do cluster
 
 OBS: Para o cluster de casa, ele é servidor de "backup do backup".    
-Logo, precisar ser um servidor NFS também.
+Logo, precisa ser um servidor NFS também.
+
+OBS: A primeira instalação foi testada numa máquina no Virtual Box.
 
 
 ## Instalação do Ubuntu Server 22.04.2
