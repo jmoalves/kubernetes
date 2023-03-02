@@ -33,7 +33,7 @@ semeruInstall() {
     jdkUrl=$(
         curl -s -L \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer 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" \
+            -H "Authorization: Bearer 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" \
             https://api.github.com/repos/ibmruntimes/semeru${jdkMajor}-binaries/releases \
         | jq -r '.[]|select(.prerelease == false)| .assets[].browser_download_url ' \
         | grep 'x64_linux' \
@@ -65,6 +65,7 @@ ibmInstall() {
     echo
     echo === JDK - IBM install - ${jdkVersion} - MAJOR = ${jdkMajor}
 
+
     jdkDirUrl=https://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/${jdkVersion}/linux/x86_64
 
     jdkFile=$(
@@ -81,6 +82,9 @@ ibmInstall() {
     fi
 
     jdkUrl=${jdkDirUrl}/${jdkFile}
+
+    # https://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/8.0.7.20/linux/x86_64/ibm-java-jre-8.0-7.20-x86_64-archive.bin
+
     echo = JDK from ${jdkUrl}
     #./ibm-java-sdk-8.0-7.20-x86_64-archive.bin -i silent -DLICENSE_ACCEPTED=TRUE -DUSER_INSTALL_DIR=/java
     mkdir -p /usr/local && cd /usr/local

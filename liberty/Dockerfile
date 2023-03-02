@@ -8,56 +8,27 @@ LABEL org.opencontainers.image.authors="jmoalves.dev@pobox.com"
 ###################
 ### ARGS
 
-# Options: openliberty or wlp
+ARG jdkVersion=
+ARG jdkFlavor=semeru
+ARG libertyFlavor=openliberty
 ARG libertyVersion=
 
-ARG libertyFlavor=openliberty
 ARG libertyRepositoryUrl=https://public.dhe.ibm.com/ibmdl/export/pub/software
-ARG jdkRepositoryUrl=https://github.com/ibmruntimes
-ARG jdkMajorVersion=17
-
-## Remove
-ARG jdkUrl
-
-RUN echo && \
-    echo === ARGs && \
-    echo libertyFlavor=${libertyFlavor} && \
-    echo libertyRepositoryUrl=${libertyRepositoryUrl} && \
-    echo libertyRoot=${libertyRoot} && \
-    echo jdkRepositoryUrl=${jdkRepositoryUrl} && \
-    echo jdkMajorVersion=${jdkMajorVersion}
-
-###################
-### Main ENV variables
-
-ENV jdkDownloadRootUrl ${jdkRepositoryUrl}/semeru${jdkMajorVersion}-binaries/releases/download
-#ENV jdkUrl ${jdkDownloadRootUrl}/jdk-17.0.6%2B10_openj9-0.36.0/ibm-semeru-open-jre_x64_linux_17.0.6_10_openj9-0.36.0.tar.gz
-
-################
-### Show vars
-
-RUN echo && \
-    echo === VARs && \
-    echo jdkDownloadRootUrl=${jdkDownloadRootUrl} && \
-    echo jdkUrl=${jdkUrl}
+ARG jdkRepositoryUrl=
 
 ################
 ### Utilities
 
 RUN yum -y install unzip
+RUN curl -L -s https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /usr/local/bin/jq && \
+    chmod a+x /usr/local/bin/jq
 
 ################
 ### JDK install
 
-# https://github.com/ibmruntimes/semeru8-binaries/releases/download/jdk8u362-b09_openj9-0.36.0/ibm-semeru-open-jre_x64_linux_8u362b09_openj9-0.36.0.tar.gz
-# https://github.com/ibmruntimes/semeru11-binaries/releases/download/jdk-11.0.18%2B10_openj9-0.36.1/ibm-semeru-open-jre_x64_linux_11.0.18_10_openj9-0.36.1.tar.gz
-# https://github.com/ibmruntimes/semeru17-binaries/releases/download/jdk-17.0.6%2B10_openj9-0.36.0/ibm-semeru-open-jre_x64_linux_17.0.6_10_openj9-0.36.0.tar.gz
-
-RUN echo && \
-    echo === JDK install - ${jdkUrl} && \
-    mkdir -p /usr/local && cd /usr/local && \
-    curl -L -s ${jdkUrl} | tar xz && \
-    mv $( ls -1d jdk* ) /usr/local/java
+COPY jdkInstall.sh /tmp/jdkInstall.sh
+# RUN bash /tmp/jdkInstall.sh -f ${jdkFlavor} -v ${jdkVersion} -r "${jdkRepositoryUrl}"
+RUN bash /tmp/jdkInstall.sh -f ${jdkFlavor} -v ${jdkVersion}
 
 ENV JAVA_HOME=/usr/local/java
 ENV PATH=${JAVA_HOME}/bin:${PATH}
