@@ -69,8 +69,6 @@ RUN java -version
 # https://public.dhe.ibm.com/ibmdl/export/pub/software/openliberty/runtime/release/23.0.0.1/openliberty-kernel-23.0.0.1.zip
 # https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/23.0.0.1/wlp-kernel-23.0.0.1.zip
 
-ENV WLP_ROOT=/usr/local/liberty
-
 RUN echo && \
     case "${libertyFlavor}" in \
         "openliberty") export libertyRootUrl=${libertyRepositoryUrl}/openliberty/runtime/release;; \
@@ -91,6 +89,31 @@ ENV WLP_HOME=/usr/local/wlp
 ENV PATH=${WLP_HOME}/bin:${PATH}
 
 ################
-### Liberty install
+### Liberty usr
 
-CMD ["/bin/bash"]
+ENV WLP_USER_DIR ${WLP_HOME}/usr
+RUN echo === Liberty USR - ${WLP_USER_DIR} && \
+    mkdir -p ${WLP_USER_DIR}
+
+################
+### Liberty server
+
+RUN server create defaultServer
+
+COPY installFeature.xml /tmp/installFeature.xml
+
+RUN cd /tmp && \
+    curl -L -s https://dlcdn.apache.org/maven/maven-3/3.9.0/binaries/apache-maven-3.9.0-bin.tar.gz | tar xz && \
+    M2_HOME=$( ls -1d apache-maven-* ) && \
+    PATH=${M2_HOME}/bin:${PATH} && \
+    mvn -f /tmp/installFeature.xml \
+	    io.openliberty.tools:liberty-maven-plugin:install-feature \
+	    -Dwlp.runtime=${WLP_HOME} \
+	    -Dwlp.user.dir=${WLP_USER_DIR} \
+	    -Dwlp.server=defaultServer && \
+    rm -rf ${M2_HOME} /tmp/installFeature.xml
+
+EXPOSE 9080/tcp
+EXPOSE 9443/tcp
+
+CMD ["/bin/bash", "server", "run", "defaultServer"]
