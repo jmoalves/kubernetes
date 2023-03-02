@@ -33,7 +33,6 @@ semeruInstall() {
     jdkUrl=$(
         curl -s -L \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer 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" \
             https://api.github.com/repos/ibmruntimes/semeru${jdkMajor}-binaries/releases \
         | jq -r '.[]|select(.prerelease == false)| .assets[].browser_download_url ' \
         | grep 'x64_linux' \
