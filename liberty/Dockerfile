@@ -116,4 +116,4 @@ RUN cd /tmp && \
 EXPOSE 9080/tcp
 EXPOSE 9443/tcp
 
-CMD ["/bin/bash", "server", "run", "defaultServer"]
+CMD server run defaultServer
