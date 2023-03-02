@@ -33,5 +33,42 @@ Preciso avaliar melhor
 
 ## Prosseguir
 
-Aguardar instalação
+Aguardar instalação   
+Reboot now
+
+
+## Login inicial
+
+A máquina inicia uma instalação do `microk8s` automaticamente, mesmo antes do login.
+
+### Upgrade
+
+sudo bash
+apt update
+apt upgrade
+
+### Aguardar instalação do `microk8s`
+
+A instalação parece ainda acontecer em background.
+
+Após algum tempo de espera, a máquina parece travar :-(
+
+Reboot nela!
+
+`microk8s` tá instalado :-)
+
+## VBOX - Instalação do Guest Additions
+
+Não roteirizado aqui (é muito específico)
+
+## microk8s
+
+### Habilitar usuário para usar
+
+
+
+Habilitar addons   
+https://ubuntu.com/tutorials/install-a-local-kubernetes-with-microk8s?&_ga=2.99577369.66062609.1677687423-1392530084.1676139765#3-enable-addons
+
+`microk8s enable dns dashboard hostpath-storage`
 
