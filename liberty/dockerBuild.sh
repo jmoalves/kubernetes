@@ -1,15 +1,11 @@
 #!/bin/bash
 
-clear
-
-jdkFlavor=semeru
 jdkVersion=
 libertyFlavor=openliberty
 libertyVersion=
 
-while getopts "J:j:L:l:" o; do
+while getopts "j:L:l:" o; do
     case "${o}" in
-    J) jdkFlavor="${OPTARG}";;
     j) jdkVersion="${OPTARG}";;
     L) libertyFlavor="${OPTARG}";;
     l) libertyVersion="${OPTARG}";;
@@ -31,17 +27,22 @@ if [ -z "${libertyVersion}" ]; then
     exit 1
 fi
 
-imageName=liberty:${libertyFlavor}-${libertyVersion}-${jdkFlavor}-${jdkVersion}
+imageName=liberty:${libertyFlavor}-${libertyVersion}-jdk-${jdkVersion}
+kubeTag=localhost:32000
+
+clear
 
 echo ==========================================
 echo === Liberty - building image ${imageName}
 echo
 
 docker build \
-    --build-arg jdkFlavor=${jdkFlavor} \
     --build-arg jdkVersion=${jdkVersion} \
     --build-arg libertyFlavor=${libertyFlavor} \
     --build-arg libertyVersion=${libertyVersion} \
-    -t jmoalves/${imageName} \
     --progress=plain \
+    -t jmoalves/${imageName} \
+    -t ${kubeTag}/${imageName} \
     .
+
+# docker push localhost:32000/${imageName}

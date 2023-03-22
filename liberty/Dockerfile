@@ -9,7 +9,6 @@ LABEL org.opencontainers.image.authors="jmoalves.dev@pobox.com"
 ### ARGS
 
 ARG jdkVersion=
-ARG jdkFlavor=semeru
 ARG libertyFlavor=openliberty
 ARG libertyVersion=
 
@@ -19,7 +18,8 @@ ARG jdkRepositoryUrl=
 ################
 ### Utilities
 
-RUN yum -y install unzip
+RUN yum -y install unzip && \
+    yum clean all
 RUN curl -L -s https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /usr/local/bin/jq && \
     chmod a+x /usr/local/bin/jq
 
@@ -27,8 +27,8 @@ RUN curl -L -s https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux6
 ### JDK install
 
 COPY jdkInstall.sh /tmp/jdkInstall.sh
-# RUN bash /tmp/jdkInstall.sh -f ${jdkFlavor} -v ${jdkVersion} -r "${jdkRepositoryUrl}"
-RUN bash /tmp/jdkInstall.sh -f ${jdkFlavor} -v ${jdkVersion}
+# RUN bash /tmp/jdkInstall.sh -v ${jdkVersion} -r "${jdkRepositoryUrl}"
+RUN bash /tmp/jdkInstall.sh -v ${jdkVersion}
 
 ENV JAVA_HOME=/usr/local/java
 ENV PATH=${JAVA_HOME}/bin:${PATH}
@@ -82,7 +82,8 @@ RUN cd /tmp && \
 	    -Dwlp.runtime=${WLP_HOME} \
 	    -Dwlp.user.dir=${WLP_USER_DIR} \
 	    -Dwlp.server=defaultServer && \
-    rm -rf ${M2_HOME} /tmp/installFeature.xml
+    rm -rf ${M2_HOME} /tmp/installFeature.xml && \
+    rm -rf $HOME/.m2
 
 EXPOSE 9080/tcp
 EXPOSE 9443/tcp
