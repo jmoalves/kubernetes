@@ -6,7 +6,7 @@ FROM jmoalves/liberty:${libertyFlavor}-${libertyVersion}-ibmjdk-${jdkVersion} AS
 
 LABEL org.opencontainers.image.authors="jmoalves.dev@pobox.com"
 
-COPY installFeature.xml features.sh installApp.sh installLibs.sh /tmp/build/
+COPY build/ /tmp/build/
 
 RUN server create appServer && \
     bash /tmp/build/installLibs.sh && \
