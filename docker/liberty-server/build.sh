@@ -38,11 +38,16 @@ fi
 
 echo
 echo ==========================================
-echo === Liberty - building image ${imageName}
+echo === Liberty - ${imageName} - prerequisites
 echo
 
 bash ${scriptPath}/../jdk/build.sh ${jdkVersion}
 bash ${scriptPath}/../liberty/build.sh -j ${jdkVersion} -f ${libertyFlavor} -v ${libertyVersion}
+
+echo
+echo ==========================================
+echo === Liberty - building image ${imageName}
+echo
 
 docker build \
     --build-arg jdkVersion=${jdkVersion} \
