@@ -1,14 +1,16 @@
 #!/bin/bash
 
+scriptPath="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd && cd - >/dev/null 2>&1 )"
+
 jdkVersion=
 libertyFlavor=openliberty
 libertyVersion=
 
-while getopts "j:L:l:" o; do
+while getopts "j:f:v:" o; do
     case "${o}" in
     j) jdkVersion="${OPTARG}";;
-    L) libertyFlavor="${OPTARG}";;
-    l) libertyVersion="${OPTARG}";;
+    f) libertyFlavor="${OPTARG}";;
+    v) libertyVersion="${OPTARG}";;
     *)
         echo Invalid options
         exit 1
@@ -23,15 +25,13 @@ if [ -z "${jdkVersion}" ]; then
 fi
 
 if [ -z "${libertyVersion}" ]; then
-    echo Inform the liberty version with the '-l' option
+    echo Inform the liberty version with the '-v' option
     exit 1
 fi
 
-imageName=liberty:${libertyFlavor}-${libertyVersion}-jdk-${jdkVersion}
-kubeTag=localhost:32000
+imageName=liberty:${libertyFlavor}-${libertyVersion}-ibmjdk-${jdkVersion}
 
-clear
-
+echo
 echo ==========================================
 echo === Liberty - building image ${imageName}
 echo
@@ -42,7 +42,4 @@ docker build \
     --build-arg libertyVersion=${libertyVersion} \
     --progress=plain \
     -t jmoalves/${imageName} \
-    -t ${kubeTag}/${imageName} \
-    .
-
-# docker push localhost:32000/${imageName}
+    ${scriptPath}
