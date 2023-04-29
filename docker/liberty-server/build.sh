@@ -41,8 +41,13 @@ echo ==========================================
 echo === Liberty - ${imageName} - prerequisites
 echo
 
-bash ${scriptPath}/../jdk/build.sh ${jdkVersion}
-bash ${scriptPath}/../liberty/build.sh -j ${jdkVersion} -f ${libertyFlavor} -v ${libertyVersion}
+if  ! (
+        ( bash ${scriptPath}/../base/build.sh ) &&
+        ( bash ${scriptPath}/../jdk/build.sh ${jdkVersion} ) &&
+        ( bash ${scriptPath}/../liberty/build.sh -j ${jdkVersion} -f ${libertyFlavor} -v ${libertyVersion} )
+); then
+    exit 1
+fi
 
 echo
 echo ==========================================
