@@ -29,9 +29,11 @@ if [ -z ${libertyRepositoryUrl} ]; then
 fi
 
 case "${libertyFlavor}" in
-    "openliberty") export libertyRootUrl=${libertyRepositoryUrl}/openliberty/runtime/release;;
-    "wlp") export libertyRootUrl=${libertyRepositoryUrl}/websphere/wasdev/downloads/wlp;;
-    *) echo ERROR && exit 1;;
+    "openliberty") libertyRootUrl=${libertyRepositoryUrl}/openliberty/runtime/release;;
+    "wlp") libertyRootUrl=${libertyRepositoryUrl}/websphere/wasdev/downloads/wlp;;
+    *) 
+        echo ERROR: Invalid libertyFlavor - ${libertyFlavor}. Expected: openliberty or wlp
+        exit 1;;
 esac
 
 if ${list}; then
