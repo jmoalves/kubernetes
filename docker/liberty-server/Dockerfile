@@ -1,8 +1,9 @@
 ARG jdkVersion=
+ARG jdkType=jre
 ARG libertyVersion=
 ARG libertyFlavor=
 
-FROM jmoalves/liberty:${libertyFlavor}-${libertyVersion}-ibmjdk-${jdkVersion} AS liberty-runtime
+FROM jmoalves/liberty:${libertyFlavor}-${libertyVersion}-ibm-${jdkType}-${jdkVersion} AS liberty-runtime
 
 LABEL org.opencontainers.image.authors="jmoalves.dev@pobox.com"
 

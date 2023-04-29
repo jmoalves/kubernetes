@@ -21,6 +21,13 @@ while getopts "f:v:r:l" o; do
 done
 shift $((OPTIND - 1))
 
+# https://public.dhe.ibm.com/ibmdl/export/pub/software/openliberty/runtime/release/23.0.0.1/openliberty-kernel-23.0.0.1.zip
+# https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/23.0.0.1/wlp-kernel-23.0.0.1.zip
+
+if [ -z ${libertyRepositoryUrl} ]; then
+    libertyRepositoryUrl=https://public.dhe.ibm.com/ibmdl/export/pub/software
+fi
+
 case "${libertyFlavor}" in
     "openliberty") export libertyRootUrl=${libertyRepositoryUrl}/openliberty/runtime/release;;
     "wlp") export libertyRootUrl=${libertyRepositoryUrl}/websphere/wasdev/downloads/wlp;;

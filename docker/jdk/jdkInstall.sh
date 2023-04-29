@@ -2,14 +2,16 @@
 
 scriptPath="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd && cd - >/dev/null 2>&1 )"
 
+jdkType=jdk
 jdkVersion=
 jdkRepositoryUrl=
 list=false
 
-while getopts "v:r:l" o; do
+while getopts "v:r:t:l" o; do
     case "${o}" in
     v) jdkVersion="${OPTARG}";;
     r) jdkRepositoryUrl="${OPTARG}";;
+    t) jdkType="${OPTARG}";;
     l) list=true;;
     *)
         echo Invalid options
@@ -31,9 +33,9 @@ if ${list}; then
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/ibmruntimes/semeru17${certifiedJDK}-binaries/releases \
     | jq -r '.[]|select(.prerelease == false)| .assets[].browser_download_url ' \
-    | grep 'jdk_x64_linux' \
+    | grep "${jdkType}_x64_linux" \
     | grep 'tar\.gz$' \
-    | sed 's/.*jdk_x64_linux_\(.*\).tar.gz.*/\1/g'
+    | sed "s/.*${jdkType}_x64_linux_\(.*\).tar.gz.*/\1/g"
 
     exit 0
 fi
@@ -42,6 +44,12 @@ if [ -z "${jdkVersion}" ]; then
     echo Inform the jdk version with the '-v' option
     exit 1
 fi
+
+case ${jdkType} in 
+    jdk) ;;
+    jre) ;;
+    *) echo Inform the jdk type with the '-t' option. Available choices - jdk or jre;;
+esac
 
 semeruInstall() {
     echo
@@ -52,7 +60,7 @@ semeruInstall() {
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/ibmruntimes/semeru${jdkMajor}${certifiedJDK}-binaries/releases \
         | jq -r '.[]|select(.prerelease == false)| .assets[].browser_download_url ' \
-        | grep 'jdk_x64_linux' \
+        | grep "${jdkType}_x64_linux" \
         | grep jdk-${adjustedVersion} \
         | grep 'tar\.gz$'
     )
@@ -82,15 +90,20 @@ ibmInstall() {
 
     jdkDirUrl=https://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/${jdkVersion}/linux/x86_64
 
+    case ${jdkType} in 
+        jdk) ibmJdkType=sdk;;
+        *) ibmJdkType=${jdkType};;
+    esac
+
     jdkFile=$(
         curl -L --list-only -s ${jdkDirUrl} \
-        | grep 'ibm-java-sdk' \
+        | grep "ibm-java-${ibmJdkType}" \
         | sed "s/.*<a href[^>]\+>\([^<]\+\).*/\1/g" \
         | grep archive
     )
 
     if [ -z "$jdkFile" ]; then
-        echo IBM JDK version ${jdkVersion} not found
+        echo IBM ${jdkType} version ${jdkVersion} not found
         exit 1
     fi
 

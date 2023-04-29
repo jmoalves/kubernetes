@@ -3,14 +3,16 @@
 scriptPath="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd && cd - >/dev/null 2>&1 )"
 
 jdkVersion=
+jdkType=jre
 libertyFlavor=openliberty
 libertyVersion=
 
-while getopts "j:f:v:" o; do
+while getopts "j:f:v:t:" o; do
     case "${o}" in
     j) jdkVersion="${OPTARG}";;
     f) libertyFlavor="${OPTARG}";;
     v) libertyVersion="${OPTARG}";;
+    t) jdkType="${OPTARG}";;
     *)
         echo Invalid options
         exit 1
@@ -29,7 +31,7 @@ if [ -z "${libertyVersion}" ]; then
     exit 1
 fi
 
-imageName=liberty:${libertyFlavor}-${libertyVersion}-ibmjdk-${jdkVersion}
+imageName=liberty:${libertyFlavor}-${libertyVersion}-ibm-${jdkType}-${jdkVersion}
 
 echo
 echo ==========================================
@@ -38,6 +40,7 @@ echo
 
 docker build \
     --build-arg jdkVersion=${jdkVersion} \
+    --build-arg jdkType=${jdkType} \
     --build-arg libertyFlavor=${libertyFlavor} \
     --build-arg libertyVersion=${libertyVersion} \
     --progress=plain \
